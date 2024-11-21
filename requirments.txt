@@ -1,3 +1,9 @@
-streamlit
-requests
--e .
+pandas
+numpy
+scikit-learn
+matplotlib
+seaborn
+catboost
+lightgbm
+xgboost
+#-e .
