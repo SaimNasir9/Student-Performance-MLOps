@@ -7,6 +7,10 @@ from scr.exception import CustomException
 from scr.logger import logging
 from sklearn.metrics import r2_score
 
+from scr.parameters import parameter_grids
+from sklearn.model_selection import KFold
+from sklearn.model_selection import GridSearchCV
+
 # Function for saving the preprocessing object
 def save_object(file_path,obj):
     try:
@@ -18,14 +22,27 @@ def save_object(file_path,obj):
 
     except Exception as e:
         raise CustomException(e,sys)
+    
+# Setting up cross validation folds
+k = 5
+kf = KFold(n_splits=k , shuffle= True , random_state= 42)
 
-def evaluate_model(X_train,y_train,X_test,y_test,models):
+
+def evaluate_model(X_train,y_train,X_test,y_test,models,params):
     try:
         training_report = {}
         testing_report = {}
 
         for i in range(len(list(models))):
             model = list(models.values())[i]
+            param = params[list(models.keys())[i]]
+
+            logging.info("GridSearchCV has been initiated.")
+            grid_search = GridSearchCV(model , param_grid=param , cv=kf)
+            grid_search.fit(X_train,y_train)
+
+            model.set_params(**grid_search.best_params_)
+            logging.info(f"Best params for the model has been found {grid_search.best_params_}")
 
             model.fit(X_train,y_train)
 
