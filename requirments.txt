@@ -7,4 +7,5 @@ catboost
 lightgbm
 xgboost
 dill
+flask
 -e .
